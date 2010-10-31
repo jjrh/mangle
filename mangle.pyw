@@ -18,9 +18,7 @@
 
 import sys
 from PyQt4 import QtGui
-
 from book import MainWindowBook
-
 
 application = QtGui.QApplication(sys.argv)
 filename = sys.argv[1] if len(sys.argv) > 1 else None

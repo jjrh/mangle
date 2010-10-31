@@ -30,7 +30,6 @@ class Book:
     DefaultOverwrite = True
     DefaultImageFlags = ImageFlags.Orient | ImageFlags.Resize | ImageFlags.Quantize
 
-
     def __init__(self):
         self.images = []
         self.filename = None
@@ -39,7 +38,6 @@ class Book:
         self.device = Book.DefaultDevice
         self.overwrite = Book.DefaultOverwrite
         self.imageFlags = Book.DefaultImageFlags
-
 
     def save(self, filename):
         document = QtXml.QDomDocument()
@@ -68,7 +66,6 @@ class Book:
 
         self.filename = filename
         self.modified = False
-
 
     def load(self, filename):
         try:
@@ -130,16 +127,13 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         if filename != None:
             self.loadBook(filename)
 
-
     def closeEvent(self, event):
         if not self.saveIfNeeded():
             event.ignore()
 
-
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
-
 
     def dropEvent(self, event):
         directories = []
@@ -155,12 +149,10 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         self.addImageDirs(directories)
         self.addImageFiles(filenames)
 
-
     def onFileNew(self):
         if self.saveIfNeeded():
             self.book = Book()
             self.listWidgetFiles.clear()
-
 
     def onFileOpen(self):
         if not self.saveIfNeeded():
@@ -174,14 +166,11 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         if not filename.isNull():
             self.loadBook(self.cleanupBookFile(filename))
 
-
     def onFileSave(self):
         self.saveBook(False)
 
-
     def onFileSaveAs(self):
         self.saveBook(True)
-
 
     def onFilesContextMenu(self, point):
         menu = QtGui.QMenu(self)
@@ -193,11 +182,9 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
 
         menu.exec_(self.listWidgetFiles.mapToGlobal(point))
 
-
     def onFilesDoubleClick(self, item):
         services = QtGui.QDesktopServices()
         services.openUrl(QtCore.QUrl.fromLocalFile(item.text()))
-
 
     def onBookAddFiles(self):
         filenames = QtGui.QFileDialog.getOpenFileNames(
@@ -207,29 +194,23 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         )
         self.addImageFiles(filenames)
 
-
     def onBookAddDirectory(self):
         directory = QtGui.QFileDialog.getExistingDirectory(self, 'Select an image directory to add')
         if not directory.isNull():
             self.addImageDirs([directory])
 
-
     def onBookShiftUp(self):
         self.shiftImageFiles(-1)
-
 
     def onBookShiftDown(self):
         self.shiftImageFiles(1)
 
-
     def onBookRemove(self):
         self.removeImageFiles()
-
 
     def onBookOptions(self):
         dialog = DialogOptions(self, self.book)
         dialog.exec_()
-
 
     def onBookExport(self):
         if len(self.book.images) == 0:
@@ -246,16 +227,13 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
             dialog = DialogConvert(self, self.book, directory)
             dialog.exec_()
 
-
     def onHelpHomepage(self):
         services = QtGui.QDesktopServices()
         services.openUrl(QtCore.QUrl('http://foosoft.net/mangle'))
 
-
     def onHelpAbout(self):
         dialog = DialogAbout(self)
         dialog.exec_()
-
 
     def saveIfNeeded(self):
         if not self.book.modified:
@@ -273,7 +251,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
             result == QtGui.QMessageBox.No or
             result == QtGui.QMessageBox.Yes and self.saveBook()
         )
-
 
     def saveBook(self, browse=False):
         if self.book.title == None:
@@ -299,7 +276,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
 
         return True
 
-
     def loadBook(self, filename):
         try:
             self.book.load(filename)
@@ -309,7 +285,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
             self.listWidgetFiles.clear()
             for image in self.book.images:
                 self.listWidgetFiles.addItem(image)
-
 
     def shiftImageFile(self, row, delta):
         validShift = (
@@ -329,7 +304,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
             self.book.images[row + delta], self.book.images[row]
         )
 
-
     def shiftImageFiles(self, delta):
         items = self.listWidgetFiles.selectedItems()
         rows = sorted([self.listWidgetFiles.row(item) for item in items])
@@ -337,14 +311,12 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         for row in rows if delta < 0 else reversed(rows):
             self.shiftImageFile(row, delta)
 
-
     def removeImageFiles(self):
         for item in self.listWidgetFiles.selectedItems():
             row = self.listWidgetFiles.row(item)
             self.listWidgetFiles.takeItem(row)
             self.book.images.remove(item.text())
             self.book.modified = True
-
 
     def addImageFiles(self, filenames):
         filenamesListed = []
@@ -358,7 +330,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
                 self.book.images.append(filename)
                 self.book.modified = True
 
-
     def addImageDirs(self, directories):
         filenames = []
 
@@ -369,8 +340,8 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
                     if self.isImageFile(path):
                         filenames.append(path)
 
+        filenames.sort()
         self.addImageFiles(filenames)
-
 
     def isImageFile(self, filename):
         imageExts = ['.jpeg', '.jpg', '.gif', '.png']
@@ -379,7 +350,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
             os.path.isfile(filename) and
             os.path.splitext(filename)[1].lower() in imageExts
         )
-
 
     def cleanupBookFile(self, filename):
         if len(os.path.splitext(unicode(filename))[1]) == 0:
