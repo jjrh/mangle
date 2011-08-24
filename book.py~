@@ -24,6 +24,8 @@ from options import DialogOptions
 from convert import DialogConvert
 from ui.book_ui import Ui_MainWindowBook
 
+import subprocess
+
 class Book:
     DefaultDevice = 'Kindle 3'
     DefaultOverwrite = True
@@ -338,16 +340,9 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
                     path = os.path.join(root, filename)
                     if self.isImageFile(path):
                         filenames.append(path)
-                    if self.isZipFile(path):
-                        ret = self.openZipFile(path)
-                        filename.append(ret)
-                        
 
         filenames.sort()
         self.addImageFiles(filenames)
-
-    def openZipFile(self, filename):
-        return False
 
     def isImageFile(self, filename):
         imageExts = ['.jpeg', '.jpg', '.gif', '.png']
@@ -355,13 +350,6 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         return (
             os.path.isfile(filename) and
             os.path.splitext(filename)[1].lower() in imageExts
-        )
-
-    def isZipFile(self, filename):
-        imageExts = ['.zip' ]
-        filename = unicode(filename)
-        return (
-            os.path.isfile(filename) and os.path.splitext(filename)[1].lower() in imageExts
         )
 
     def cleanupBookFile(self, filename):
