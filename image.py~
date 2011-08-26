@@ -92,13 +92,8 @@ def resizeImage(image, size):
 
     return image.resize((widthImg, heightImg), Image.ANTIALIAS)
 
-def convert_to_image(image_unicode):
-    return Image.open(image_unicode)
 
 def formatImage(image):
-    print "\t\tDEBUG!"
-    print type(image)
-    print "-----------------"
     if image.mode == 'RGB':
         return image
     return image.convert('RGB')
@@ -149,13 +144,10 @@ def convertImage(source, target, device, flags):
         raise RuntimeError('Unexpected output device %s' % device)
 
     try:
-        if type(source) == str:
-            image = Image.open(source)
-        else:
-            image = source
+        image = Image.open(source)
     except IOError:
         raise RuntimeError('Cannot read image file %s' % source)
-    
+
     image = formatImage(image)
     if flags & ImageFlags.Orient:
         image = orientImage(image, size)

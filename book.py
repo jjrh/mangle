@@ -17,6 +17,8 @@
 import os
 from PyQt4 import QtGui, QtCore, QtXml
 
+import zipfile
+
 import image
 from image import ImageFlags
 from about import DialogAbout
@@ -316,7 +318,7 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
             self.listWidgetFiles.takeItem(row)
             self.book.images.remove(item.text())
             self.book.modified = True
-
+            
     def addImageFiles(self, filenames):
         filenamesListed = []
         for i in xrange(0, self.listWidgetFiles.count()):
@@ -339,14 +341,24 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
                     if self.isImageFile(path):
                         filenames.append(path)
                     if self.isZipFile(path):
-                        ret = self.openZipFile(path)
-                        filename.append(ret)
+                         ret = self.openZipFile(path)
+                         filenames.append(ret)
+    
                         
 
         filenames.sort()
         self.addImageFiles(filenames)
 
     def openZipFile(self, filename):
+        archive = zipfile.ZipFile(filename, "r")
+        for name in archive.namelist():
+            try:
+                data = archive.read()
+                data = image.convert_to_image(data)
+                self.book.images.append(data)
+                
+            except:
+                pass
         return False
 
     def isImageFile(self, filename):
@@ -358,10 +370,9 @@ class MainWindowBook(QtGui.QMainWindow, Ui_MainWindowBook):
         )
 
     def isZipFile(self, filename):
-        imageExts = ['.zip' ]
         filename = unicode(filename)
         return (
-            os.path.isfile(filename) and os.path.splitext(filename)[1].lower() in imageExts
+            os.path.isfile(filename) and zipfile.is_zipfile(filename)
         )
 
     def cleanupBookFile(self, filename):
